@@ -856,7 +856,7 @@ public class TestApps extends AbstractShellTest
     }
 
     @Test
-    public void canListUniquePropertyConstraints() throws Exception
+    public void canListConstraints() throws Exception
     {
         // GIVEN
         Label label = label( "Person" );
@@ -882,7 +882,7 @@ public class TestApps extends AbstractShellTest
     }
 
     @Test
-    public void canListUniquePropertyConstraintsByLabel() throws Exception
+    public void canListConstraintsByLabel() throws Exception
     {
         // GIVEN
         Label label1 = label( "Person" );
@@ -908,7 +908,7 @@ public class TestApps extends AbstractShellTest
     }
 
     @Test
-    public void canListUniquePropertyConstraintsByLabelAndProperty() throws Exception
+    public void canListConstraintsByLabelAndProperty() throws Exception
     {
         // GIVEN
         Label label1 = label( "Person" );
