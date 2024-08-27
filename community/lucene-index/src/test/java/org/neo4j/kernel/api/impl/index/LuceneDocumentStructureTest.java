@@ -89,7 +89,7 @@ public class LuceneDocumentStructureTest
     public void shouldBuildQueryRepresentingBoolProperty() throws Exception
     {
         // given
-        TermQuery query = (TermQuery) documentStructure.newValueQuery( true );
+        TermQuery query = (TermQuery) documentStructure.newQuery( true );
 
         // then
         assertEquals( "true", query.getTerm().text() );
@@ -99,7 +99,7 @@ public class LuceneDocumentStructureTest
     public void shouldBuildQueryRepresentingStringProperty() throws Exception
     {
         // given
-        TermQuery query = (TermQuery) documentStructure.newValueQuery( "Characters" );
+        TermQuery query = (TermQuery) documentStructure.newQuery( "Characters" );
 
         // then
         assertEquals( "Characters", query.getTerm().text() );
@@ -110,7 +110,7 @@ public class LuceneDocumentStructureTest
     public void shouldBuildQueryRepresentingNumberProperty() throws Exception
     {
         // given
-        TermQuery query = (TermQuery) documentStructure.newValueQuery( 12 );
+        TermQuery query = (TermQuery) documentStructure.newQuery( 12 );
 
         // then
         assertEquals(  NumericUtils.doubleToPrefixCoded( 12.0 ), query.getTerm().text() );
@@ -120,7 +120,7 @@ public class LuceneDocumentStructureTest
     public void shouldBuildQueryRepresentingArrayProperty() throws Exception
     {
         // given
-        TermQuery query = (TermQuery) documentStructure.newValueQuery( new Integer[]{1, 2, 3} );
+        TermQuery query = (TermQuery) documentStructure.newQuery( new Integer[]{1, 2, 3} );
 
         // then
         assertEquals( "D1.0|2.0|3.0|", query.getTerm().text() );

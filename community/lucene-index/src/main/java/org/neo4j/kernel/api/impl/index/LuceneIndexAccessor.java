@@ -172,7 +172,7 @@ abstract class LuceneIndexAccessor implements IndexAccessor
     private void addRecovered( long nodeId, Object value ) throws IOException, IndexCapacityExceededException
     {
         Fieldable encodedValue = documentStructure.encodeAsFieldable( value );
-        writer.updateDocument( documentStructure.newTermForChangeOrRemove( nodeId ),
+        writer.updateDocument( documentStructure.newQueryForChangeOrRemove( nodeId ),
                 documentStructure.newDocumentRepresentingProperty( nodeId, encodedValue ) );
     }
 
@@ -185,13 +185,13 @@ abstract class LuceneIndexAccessor implements IndexAccessor
     protected void change( long nodeId, Object value ) throws IOException, IndexCapacityExceededException
     {
         Fieldable encodedValue = documentStructure.encodeAsFieldable( value );
-        writer.updateDocument( documentStructure.newTermForChangeOrRemove( nodeId ),
+        writer.updateDocument( documentStructure.newQueryForChangeOrRemove( nodeId ),
                 documentStructure.newDocumentRepresentingProperty( nodeId, encodedValue ) );
     }
 
     protected void remove( long nodeId ) throws IOException
     {
-        writer.deleteDocuments( documentStructure.newTermForChangeOrRemove( nodeId ) );
+        writer.deleteDocuments( documentStructure.newQueryForChangeOrRemove( nodeId ) );
     }
 
     // This method should be synchronized because we need every thread to perform actual refresh

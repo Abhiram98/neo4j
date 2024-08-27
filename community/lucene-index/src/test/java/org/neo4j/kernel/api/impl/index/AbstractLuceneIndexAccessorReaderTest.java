@@ -50,13 +50,13 @@ public abstract class AbstractLuceneIndexAccessorReaderTest<R extends LuceneInde
     public void shouldUseCorrectLuceneQueryForEqualityQuery() throws Exception
     {
         // Given
-        when( documentLogic.newValueQuery( "foo" ) ).thenReturn( mock( Query.class) );
+        when( documentLogic.newQuery( "foo" ) ).thenReturn( mock( Query.class) );
 
         // When
         accessor.lookup( "foo" );
 
         // Then
-        verify( documentLogic ).newValueQuery( "foo" );
+        verify( documentLogic ).newQuery( "foo" );
         verifyNoMoreInteractions( documentLogic );
     }
 
@@ -78,13 +78,13 @@ public abstract class AbstractLuceneIndexAccessorReaderTest<R extends LuceneInde
     public void shouldUseCorrectLuceneQueryForMatchAllQuery() throws Exception
     {
         // Given
-        when( documentLogic.newAllQuery() ).thenReturn( mock( Query.class) );
+        when( documentLogic.newMatchAllQuery() ).thenReturn( mock( Query.class) );
 
         // When
         accessor.scan();
 
         // Then
-        verify( documentLogic ).newAllQuery();
+        verify( documentLogic ).newMatchAllQuery();
         verifyNoMoreInteractions( documentLogic );
     }
 }
