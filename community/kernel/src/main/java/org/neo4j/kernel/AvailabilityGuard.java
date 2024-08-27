@@ -211,7 +211,21 @@ public class AvailabilityGuard
      */
     public boolean isAvailable()
     {
-        return availability() == Availability.AVAILABLE;
+        Availability result = Availability.UNAVAILABLE;
+        if ( isShutdown.get() )
+        {
+            result = Availability.SHUTDOWN;
+        } else {
+            int val = requirementCount.get();
+            if (val == 0) {
+                result = Availability.AVAILABLE;
+            } else {
+                assert (val > 0);
+                result = Availability.UNAVAILABLE;
+            }
+        }
+
+        return result == Availability.AVAILABLE;
     }
 
     /**
@@ -246,27 +260,22 @@ public class AvailabilityGuard
         throw new UnavailableException( description );
     }
 
-    private Availability availability()
-    {
-        if ( isShutdown.get() )
-        {
-            return Availability.SHUTDOWN;
-        }
-
-        int count = requirementCount.get();
-        if ( count == 0 )
-        {
-            return Availability.AVAILABLE;
-        }
-
-        assert (count > 0);
-
-        return Availability.UNAVAILABLE;
-    }
-
     private Availability availability( long millis )
     {
-        Availability availability = availability();
+        Availability availability = Availability.UNAVAILABLE;
+        if ( isShutdown.get() )
+        {
+            availability = Availability.SHUTDOWN;
+        } else {
+            int val1 = requirementCount.get();
+            if (val1 == 0) {
+                availability = Availability.AVAILABLE;
+            } else {
+                assert (val1 > 0);
+                availability = Availability.UNAVAILABLE;
+            }
+        }
+
         if ( availability != Availability.UNAVAILABLE )
         {
             return availability;
@@ -284,7 +293,21 @@ public class AvailabilityGuard
                 Thread.interrupted();
                 break;
             }
-            availability = availability();
+            Availability result = Availability.UNAVAILABLE;
+            if ( isShutdown.get() )
+            {
+                result = Availability.SHUTDOWN;
+            } else {
+                int val = requirementCount.get();
+                if (val == 0) {
+                    result = Availability.AVAILABLE;
+                } else {
+                    assert (val > 0);
+                    result = Availability.UNAVAILABLE;
+                }
+            }
+
+            availability = result;
         } while ( availability == Availability.UNAVAILABLE && clock.currentTimeMillis() < timeout );
 
         return availability;
