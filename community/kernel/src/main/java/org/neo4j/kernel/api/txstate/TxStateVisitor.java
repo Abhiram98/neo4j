@@ -139,13 +139,11 @@ public interface TxStateVisitor
         {   // Ignore
         }
 
-        @Override
-        public void visitAddedUniquePropertyConstraint( UniquenessConstraint element )
+        public void visitAddedConstraint(UniquenessConstraint element )
         {   // Ignore
         }
 
-        @Override
-        public void visitRemovedUniquePropertyConstraint( UniquenessConstraint element )
+        public void visitRemovedConstraint(UniquenessConstraint element )
         {   // Ignore
         }
 
