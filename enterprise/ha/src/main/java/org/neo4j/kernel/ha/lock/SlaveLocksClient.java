@@ -92,62 +92,62 @@ class SlaveLocksClient implements Locks.Client
     }
 
     @Override
-    public void acquireShared( Locks.ResourceType resourceType, long resourceId ) throws AcquireLockTimeoutException
+    public void acquireShared( Locks.ResourceType resourceType, long resourceIds) throws AcquireLockTimeoutException
     {
         Map<Long, AtomicInteger> lockMap = getLockMap( sharedLocks, resourceType );
-        AtomicInteger preExistingLock = lockMap.get( resourceId );
+        AtomicInteger preExistingLock = lockMap.get(resourceIds);
         if( preExistingLock != null )
         {
             // We already hold this lock, just increment the local reference count
             preExistingLock.incrementAndGet();
         }
-        else if ( getReadLockOnMaster( resourceType, resourceId ) )
+        else if ( getReadLockOnMaster( resourceType, resourceIds) )
         {
-            if ( client.trySharedLock( resourceType, resourceId ) )
+            if ( client.trySharedLock( resourceType, resourceIds) )
             {
-                lockMap.put( resourceId, new AtomicInteger( 1 ) );
+                lockMap.put(resourceIds, new AtomicInteger( 1 ) );
             }
             else
             {
-                throw new LocalDeadlockDetectedException( client, localLockManager, resourceType, resourceId, READ );
+                throw new LocalDeadlockDetectedException( client, localLockManager, resourceType, resourceIds, READ );
 
             }
         }
     }
 
     @Override
-    public void acquireExclusive( Locks.ResourceType resourceType, long resourceId ) throws
+    public void acquireExclusive( Locks.ResourceType resourceType, long resourceIds) throws
             AcquireLockTimeoutException
     {
         Map<Long, AtomicInteger> lockMap = getLockMap( exclusiveLocks, resourceType );
 
-        AtomicInteger preExistingLock = lockMap.get( resourceId );
+        AtomicInteger preExistingLock = lockMap.get(resourceIds);
         if( preExistingLock != null )
         {
             // We already hold this lock, just increment the local reference count
             preExistingLock.incrementAndGet();
         }
-        else if ( acquireExclusiveOnMaster( resourceType, resourceId ) )
+        else if ( acquireExclusiveOnMaster( resourceType, resourceIds) )
         {
-            if ( client.tryExclusiveLock( resourceType, resourceId ) )
+            if ( client.tryExclusiveLock( resourceType, resourceIds) )
             {
-                lockMap.put( resourceId, new AtomicInteger( 1 ) );
+                lockMap.put(resourceIds, new AtomicInteger( 1 ) );
             }
             else
             {
-                throw new LocalDeadlockDetectedException( client, localLockManager, resourceType, resourceId, WRITE );
+                throw new LocalDeadlockDetectedException( client, localLockManager, resourceType, resourceIds, WRITE );
             }
         }
     }
 
     @Override
-    public boolean tryExclusiveLock( Locks.ResourceType resourceType, long resourceId )
+    public boolean tryExclusiveLock( Locks.ResourceType resourceType, long resourceIds)
     {
         throw newUnsupportedDirectTryLockUsageException();
     }
 
     @Override
-    public boolean trySharedLock( Locks.ResourceType resourceType, long resourceId )
+    public boolean trySharedLock( Locks.ResourceType resourceType, long resourceIds)
     {
         throw newUnsupportedDirectTryLockUsageException();
     }
