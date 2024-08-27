@@ -732,9 +732,25 @@ public class TestNeoStore
         assertRelationshipData( rel, firstNode, secondNode, relType );;
         transaction.relDelete( rel );
 
-        assertHasRelationships( firstNode );
+        try ( Cursor<NodeItem> nodeCursor1 = ((KernelStatement) tx.acquireStatement()).getStoreStatement()
+                .acquireSingleNodeCursor(
 
-        assertHasRelationships( secondNode );
+                        firstNode) )
+        {
+            nodeCursor1.next();
+            PrimitiveLongIterator rels1 = nodeCursor1.get().getRelationships( Direction.BOTH );
+            assertTrue( rels1.hasNext() );
+        }
+
+        try ( Cursor<NodeItem> nodeCursor = ((KernelStatement) tx.acquireStatement()).getStoreStatement()
+                .acquireSingleNodeCursor(
+
+                        secondNode) )
+        {
+            nodeCursor.next();
+            PrimitiveLongIterator rels = nodeCursor.get().getRelationships( Direction.BOTH );
+            assertTrue( rels.hasNext() );
+        }
     }
 
     private static class CountingPropertyReceiver implements PropertyReceiver
@@ -793,23 +809,26 @@ public class TestNeoStore
         assertRelationshipData( rel, firstNode, secondNode, relType );
         transaction.relDelete( rel );
 
-        assertHasRelationships( firstNode );
+        try ( Cursor<NodeItem> nodeCursor1 = ((KernelStatement) tx.acquireStatement()).getStoreStatement()
+                .acquireSingleNodeCursor(
 
-        assertHasRelationships( secondNode );
+                        firstNode) )
+        {
+            nodeCursor1.next();
+            PrimitiveLongIterator rels1 = nodeCursor1.get().getRelationships( Direction.BOTH );
+            assertTrue( rels1.hasNext() );
+        }
 
-    }
-
-    private void assertHasRelationships( long node )
-    {
         try ( Cursor<NodeItem> nodeCursor = ((KernelStatement) tx.acquireStatement()).getStoreStatement()
                 .acquireSingleNodeCursor(
 
-                node ) )
+                        secondNode) )
         {
             nodeCursor.next();
             PrimitiveLongIterator rels = nodeCursor.get().getRelationships( Direction.BOTH );
             assertTrue( rels.hasNext() );
         }
+
     }
 
     private void deleteNode1( long node, DefinedProperty prop1,
@@ -854,7 +873,15 @@ public class TestNeoStore
         CountingPropertyReceiver propertyCounter = new CountingPropertyReceiver();
         propertyLoader.nodeLoadProperties( node, propertyCounter );
         assertEquals( 3, propertyCounter.count );
-        assertHasRelationships( node );
+        try ( Cursor<NodeItem> nodeCursor = ((KernelStatement) tx.acquireStatement()).getStoreStatement()
+                .acquireSingleNodeCursor(
+
+                        node) )
+        {
+            nodeCursor.next();
+            PrimitiveLongIterator rels = nodeCursor.get().getRelationships( Direction.BOTH );
+            assertTrue( rels.hasNext() );
+        }
         transaction.nodeDelete( node );
     }
 
@@ -901,7 +928,15 @@ public class TestNeoStore
         propertyLoader.nodeLoadProperties( node, propertyCounter );
         assertEquals( 3, propertyCounter.count );
 
-        assertHasRelationships( node );
+        try ( Cursor<NodeItem> nodeCursor = ((KernelStatement) tx.acquireStatement()).getStoreStatement()
+                .acquireSingleNodeCursor(
+
+                        node) )
+        {
+            nodeCursor.next();
+            PrimitiveLongIterator rels = nodeCursor.get().getRelationships( Direction.BOTH );
+            assertTrue( rels.hasNext() );
+        }
 
         transaction.nodeDelete( node );
     }
