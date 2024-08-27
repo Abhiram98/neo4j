@@ -65,7 +65,7 @@ import static org.neo4j.helpers.collection.IteratorUtil.single;
 public class ConstraintsCreationIT extends KernelIntegrationTest
 {
     @Test
-    public void shouldBeAbleToStoreAndRetrieveUniquePropertyConstraintRule() throws Exception
+    public void shouldBeAbleToStoreAndRetrieveUniquenessConstraintRule() throws Exception
     {
         // given
         PropertyConstraint constraint;
@@ -125,7 +125,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldNotPersistUniquePropertyConstraintsCreatedInAbortedTransaction() throws Exception
+    public void shouldNotPersistUniquenessConstraintsCreatedInAbortedTransaction() throws Exception
     {
         // given
         {
@@ -167,7 +167,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldNotStoreUniquePropertyConstraintThatIsRemovedInTheSameTransaction() throws Exception
+    public void shouldNotStoreUniquenessConstraintThatIsRemovedInTheSameTransaction() throws Exception
     {
         // given
         {
@@ -251,7 +251,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldNotCreateUniquePropertyConstraintThatAlreadyExists() throws Exception
+    public void shouldNotCreateUniquenessConstraintThatAlreadyExists() throws Exception
     {
         // given
         {
@@ -303,7 +303,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldNotRemoveUniquePropertyConstraintThatGetsReAdded() throws Exception
+    public void shouldNotRemoveConstraintThatGetsReAdded() throws Exception
     {
         // given
         PropertyConstraint constraint;
@@ -423,7 +423,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldCreateAnIndexToGoAlongWithAUniquePropertyConstraint() throws Exception
+    public void shouldCreateAnIndexToGoAlongWithAUniquenessConstraint() throws Exception
     {
         // when
         {
@@ -622,7 +622,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldNotLeaveAnyStateBehindAfterFailingToCreateUniquePropertyConstraint() throws Exception
+    public void shouldNotLeaveAnyStateBehindAfterFailingToCreateConstraint() throws Exception
     {
         // given
         try ( org.neo4j.graphdb.Transaction tx = db.beginTx() )
@@ -662,7 +662,7 @@ public class ConstraintsCreationIT extends KernelIntegrationTest
     }
 
     @Test
-    public void shouldBeAbleToResolveConflictsAndRecreateConstraintAfterFailingToCreateUniquePropertyConstraintDueToConflict()
+    public void shouldBeAbleToResolveConflictsAndRecreateConstraintAfterFailingToCreateConstraintDueToConflict()
             throws Exception
     {
         // given
