@@ -76,7 +76,8 @@ public class CountsComputerTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker() );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache,
+                    emptyConfig, new File(dir, COUNTS_STORE_BASE)));
             // a transaction for creating the label and a transaction for the node
             assertEquals( BASE_TX_ID, store.txId() );
             assertEquals( 0, store.totalEntriesStored() );
@@ -103,7 +104,8 @@ public class CountsComputerTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker() );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache,
+                    emptyConfig, new File(dir, COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID + 1 + 1 + 1 + 1, store.txId() );
             assertEquals( 4, store.totalEntriesStored() );
             assertEquals( 4, get( store, nodeKey( -1 ) ) );
@@ -135,7 +137,8 @@ public class CountsComputerTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker() );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache,
+                    emptyConfig, new File(dir, COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID + 1 + 1 + 1 + 1, store.txId() );
             assertEquals( 3, store.totalEntriesStored() );
             assertEquals( 3, get( store, nodeKey( -1 ) ) );
@@ -167,7 +170,8 @@ public class CountsComputerTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker() );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache,
+                    emptyConfig, new File(dir, COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID + 1 + 1 + 1 + 1 + 1, store.txId() );
 //            assertEquals( 11, store.totalRecordsStored() ); // we do not support yet (label,type,label) counts
             assertEquals( 9, store.totalEntriesStored() );
@@ -204,7 +208,8 @@ public class CountsComputerTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker() );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache,
+                    emptyConfig, new File(dir, COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID + 1 + 1 + 1 + 1 + 1 + 1, store.txId() );
 //            assertEquals( 15, store.totalRecordsStored() ); // we do not support yet (label,type,label) counts
             assertEquals( 13, store.totalEntriesStored() );
@@ -248,7 +253,8 @@ public class CountsComputerTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker() );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache,
+                    emptyConfig, new File(dir, COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1, store.txId() );
             assertEquals( 22, store.totalEntriesStored() );
 //            assertEquals( 30, store.totalRecordsStored() ); // we do not support yet (label,type,label) counts
@@ -318,12 +324,6 @@ public class CountsComputerTest
     {
         fs.deleteFile( alphaStoreFile() );
         fs.deleteFile( betaStoreFile() );
-    }
-
-    private CountsTracker createCountsTracker()
-    {
-        return new CountsTracker( NullLogProvider.getInstance(), fs, pageCache,
-                emptyConfig, new File( dir, COUNTS_STORE_BASE ) );
     }
 
     private void rebuildCounts( long lastCommittedTransactionId ) throws IOException
