@@ -55,7 +55,7 @@ public class ValueUnboundRelationship implements UnboundRelationship
             throws IOException
     {
         long relId = unpacker.unpackRelationshipIdentity();
-        String relTypeName = unpacker.unpackText();
+        String relTypeName = unpacker.unpackString();
 
         Map<String, Object> props = unpacker.unpackProperties();
 

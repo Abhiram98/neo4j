@@ -58,7 +58,7 @@ public class ValueRelationship implements Relationship
         long relId = unpacker.unpackRelationshipIdentity();
         long startNodeId = unpacker.unpackNodeIdentity();
         long endNodeId = unpacker.unpackNodeIdentity();
-        String relTypeName = unpacker.unpackText();
+        String relTypeName = unpacker.unpackString();
 
         Map<String, Object> props = unpacker.unpackProperties();
 

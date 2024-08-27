@@ -596,31 +596,31 @@ public class PackStream
             throw new Unexpected( PackType.FLOAT, markerByte);
         }
 
-        public String unpackText() throws IOException
+        public String unpackString() throws IOException
         {
             return new String( unpackUTF8(), UTF_8 );
         }
 
-        private int unpackBytesHeader() throws IOException
+        public byte[] unpackBytes() throws IOException
         {
             final byte markerByte = in.readByte();
 
-            int size;
+            int size1;
 
             switch ( markerByte )
             {
                 case BYTES_8:
-                    size = unpackUINT8();
+                    size1 = unpackUINT8();
                     break;
                 case BYTES_16:
-                    size = unpackUINT16();
+                    size1 = unpackUINT16();
                     break;
                 case BYTES_32:
                 {
                     long longSize = unpackUINT32();
                     if ( longSize <= Integer.MAX_VALUE )
                     {
-                        size = (int) longSize;
+                        size1 = (int) longSize;
                     }
                     else
                     {
@@ -632,12 +632,7 @@ public class PackStream
                     throw new Unexpected( PackType.BYTES, markerByte);
             }
 
-            return size;
-        }
-
-        public byte[] unpackBytes() throws IOException
-        {
-            int size = unpackBytesHeader();
+            int size = size1;
             return unpackRawBytes( size );
         }
 
@@ -652,47 +647,82 @@ public class PackStream
          */
         public int unpackBytesInto( byte[] buffer, int offset, int length ) throws IOException
         {
-            int size = unpackBytesHeader();
+            final byte markerByte = in.readByte();
+
+            int size1;
+
+            switch ( markerByte )
+            {
+                case BYTES_8:
+                    size1 = unpackUINT8();
+                    break;
+                case BYTES_16:
+                    size1 = unpackUINT16();
+                    break;
+                case BYTES_32:
+                {
+                    long longSize = unpackUINT32();
+                    if ( longSize <= Integer.MAX_VALUE )
+                    {
+                        size1 = (int) longSize;
+                    }
+                    else
+                    {
+                        throw new Overflow( "BYTES_32 too long for Java" );
+                    }
+                    break;
+                }
+                default:
+                    throw new Unexpected( PackType.BYTES, markerByte);
+            }
+
+            int size = size1;
             if ( length >= size )
             {
-                unpackRawBytesInto( buffer, offset, size );
+                if ( size > 0 )
+                {
+                    in.readBytes(buffer, offset, size);
+                }
             }
             else
             {
-                unpackRawBytesInto( buffer, offset, length );
+                if ( length > 0 )
+                {
+                    in.readBytes(buffer, offset, length);
+                }
                 discardRawBytes( size - length );
             }
             return size;
         }
 
-        public int unpackTextHeader() throws IOException
+        public byte[] unpackUTF8() throws IOException
         {
             final byte markerByte = in.readByte();
             final byte markerHighNibble = (byte) (markerByte & 0xF0);
             final byte markerLowNibble = (byte) (markerByte & 0x0F);
 
-            int size;
+            int size1;
 
             if ( markerHighNibble == TINY_TEXT )
             {
-                size = markerLowNibble;
+                size1 = markerLowNibble;
             }
             else
             {
                 switch ( markerByte )
                 {
                     case TEXT_8:
-                        size = unpackUINT8();
+                        size1 = unpackUINT8();
                         break;
                     case TEXT_16:
-                        size = unpackUINT16();
+                        size1 = unpackUINT16();
                         break;
                     case TEXT_32:
                     {
                         long longSize = unpackUINT32();
                         if ( longSize <= Integer.MAX_VALUE )
                         {
-                            size = (int) longSize;
+                            size1 = (int) longSize;
                         }
                         else
                         {
@@ -705,12 +735,7 @@ public class PackStream
                 }
             }
 
-            return size;
-        }
-
-        public byte[] unpackUTF8() throws IOException
-        {
-            int size = unpackTextHeader();
+            int size = size1;
             return unpackRawBytes( size );
         }
 
@@ -725,14 +750,58 @@ public class PackStream
          */
         public int unpackUTF8Into( byte[] buffer, int offset, int length ) throws IOException
         {
-            int size = unpackTextHeader();
-            if ( length >= size )
+            final byte markerByte = in.readByte();
+            final byte markerHighNibble = (byte) (markerByte & 0xF0);
+            final byte markerLowNibble = (byte) (markerByte & 0x0F);
+
+            int size1;
+
+            if ( markerHighNibble == TINY_TEXT )
             {
-                unpackRawBytesInto( buffer, offset, size );
+                size1 = markerLowNibble;
             }
             else
             {
-                unpackRawBytesInto( buffer, offset, length );
+                switch ( markerByte )
+                {
+                    case TEXT_8:
+                        size1 = unpackUINT8();
+                        break;
+                    case TEXT_16:
+                        size1 = unpackUINT16();
+                        break;
+                    case TEXT_32:
+                    {
+                        long longSize = unpackUINT32();
+                        if ( longSize <= Integer.MAX_VALUE )
+                        {
+                            size1 = (int) longSize;
+                        }
+                        else
+                        {
+                            throw new Overflow( "TEXT_32 too long for Java" );
+                        }
+                        break;
+                    }
+                    default:
+                        throw new Unexpected( PackType.TEXT, markerByte );
+                }
+            }
+
+            int size = size1;
+            if ( length >= size )
+            {
+                if ( size > 0 )
+                {
+                    in.readBytes(buffer, offset, size);
+                }
+            }
+            else
+            {
+                if ( length > 0 )
+                {
+                    in.readBytes(buffer, offset, length);
+                }
                 discardRawBytes( size - length );
             }
             return size;
@@ -790,16 +859,11 @@ public class PackStream
             else
             {
                 byte[] heapBuffer = new byte[size];
-                unpackRawBytesInto( heapBuffer, 0, heapBuffer.length );
+                if ( heapBuffer.length > 0 )
+                {
+                    in.readBytes(heapBuffer, 0, heapBuffer.length);
+                }
                 return heapBuffer;
-            }
-        }
-
-        private void unpackRawBytesInto( byte[] buffer, int offset, int size ) throws IOException
-        {
-            if ( size > 0 )
-            {
-                in.readBytes( buffer, offset, size );
             }
         }
 

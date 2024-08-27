@@ -252,7 +252,7 @@ public class Neo4jPack
             switch ( valType )
             {
                 case TEXT:
-                    return unpackText();
+                    return unpackString();
                 case INTEGER:
                     return unpackLong();
                 case FLOAT:
@@ -287,7 +287,7 @@ public class Neo4jPack
                     Map<String, Object> map = new HashMap<>( size, 1 );
                     for ( int j = 0; j < size; j++ )
                     {
-                        String key = unpackText();
+                        String key = unpackString();
                         Object val = unpack();
                         map.put( key, val );
                     }
@@ -336,7 +336,7 @@ public class Neo4jPack
             Map<String, Object> map = new HashMap<>( size, 1 );
             for ( int i = 0; i < size; i++ )
             {
-                String key = unpackText();
+                String key = unpackString();
                 map.put( key, unpack() );
             }
             return map;
@@ -351,7 +351,7 @@ public class Neo4jPack
                 map = new HashMap<>( numProps, 1 );
                 for ( int j = 0; j < numProps; j++ )
                 {
-                    String key = unpackText();
+                    String key = unpackString();
                     Object val = unpack();
                     map.put( key, val );
                 }
