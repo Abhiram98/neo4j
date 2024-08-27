@@ -75,7 +75,8 @@ public class CountsRotationTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker( pageCache ) );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache, emptyConfig,
+                    new File(dir.getPath(), COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID, store.txId() );
             assertEquals( INITIAL_MINOR_VERSION, store.minorVersion() );
             assertEquals( 0, store.totalEntriesStored() );
@@ -84,7 +85,8 @@ public class CountsRotationTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker( pageCache ) );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache, emptyConfig,
+                    new File(dir.getPath(), COUNTS_STORE_BASE)));
             assertEquals( BASE_TX_ID, store.txId() );
             assertEquals( INITIAL_MINOR_VERSION, store.minorVersion() );
             assertEquals( 0, store.totalEntriesStored() );
@@ -112,7 +114,8 @@ public class CountsRotationTest
 
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker( pageCache ) );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache, emptyConfig,
+                    new File(dir.getPath(), COUNTS_STORE_BASE)));
             // a transaction for creating the label and a transaction for the node
             assertEquals( BASE_TX_ID + 1 + 1, store.txId() );
             assertEquals( INITIAL_MINOR_VERSION, store.minorVersion() );
@@ -150,7 +153,8 @@ public class CountsRotationTest
         final PageCache pageCache = db.getDependencyResolver().resolveDependency( PageCache.class );
         try ( Lifespan life = new Lifespan() )
         {
-            CountsTracker store = life.add( createCountsTracker( pageCache ) );
+            CountsTracker store = life.add(new CountsTracker(NullLogProvider.getInstance(), fs, pageCache, emptyConfig,
+                    new File(dir.getPath(), COUNTS_STORE_BASE)));
             // NOTE since the rotation happens before the second transaction is committed we do not see those changes
             // in the stats
             // a transaction for creating the label and a transaction for the node
@@ -170,12 +174,6 @@ public class CountsRotationTest
         assertEquals( 1, tracker.nodeCount( labelId, newDoubleLongRegister() ).readSecond() );
 
         db.shutdown();
-    }
-
-    private CountsTracker createCountsTracker(PageCache pageCache)
-    {
-        return new CountsTracker( NullLogProvider.getInstance(), fs, pageCache, emptyConfig,
-                new File( dir.getPath(), COUNTS_STORE_BASE ) );
     }
 
     private void checkPoint( GraphDatabaseAPI db ) throws IOException
