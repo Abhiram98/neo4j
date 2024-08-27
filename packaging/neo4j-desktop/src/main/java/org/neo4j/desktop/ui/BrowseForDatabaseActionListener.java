@@ -66,7 +66,22 @@ class BrowseForDatabaseActionListener implements ActionListener
             }
             else
             {
-                selectedFile = fileSelection();
+                File selectedFile1 = null;
+
+                JFileChooser jFileChooser = new JFileChooser();
+                jFileChooser.setFileSelectionMode( DIRECTORIES_ONLY );
+                jFileChooser.setCurrentDirectory( new File( directoryDisplay.getText() ) );
+                jFileChooser.setDialogTitle( "Select database" );
+                jFileChooser.setDialogType( CUSTOM_DIALOG );
+
+                int choice = jFileChooser.showOpenDialog( frame );
+
+                if ( choice == APPROVE_OPTION )
+                {
+                    selectedFile1 = jFileChooser.getSelectedFile();
+                }
+
+                selectedFile = selectedFile1;
             }
 
             try
@@ -81,14 +96,14 @@ class BrowseForDatabaseActionListener implements ActionListener
                 fileWriter.flush();
                 fileWriter.close();
             }
-            catch ( UnsuitableDirectoryException ude )
+            catch ( UnsuitableDirectoryException error)
             {
-                int choice = showWrappedConfirmDialog(
+                int result = showWrappedConfirmDialog(
                         frame,
-                        ude.getMessage() + "\nPlease choose a different folder.",
+                        error.getMessage() + "\nPlease choose a different folder.",
                         "Invalid folder selected", OK_CANCEL_OPTION, ERROR_MESSAGE );
 
-                if ( choice == CANCEL_OPTION )
+                if ( result == CANCEL_OPTION )
                 {
                     cancelled = true;
                 }
@@ -99,26 +114,6 @@ class BrowseForDatabaseActionListener implements ActionListener
                 System.out.println( ioe );
             }
         }
-    }
-
-    private File fileSelection()
-    {
-        File selectedFile = null;
-
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode( DIRECTORIES_ONLY );
-        fileChooser.setCurrentDirectory( new File( directoryDisplay.getText() ) );
-        fileChooser.setDialogTitle( "Select database" );
-        fileChooser.setDialogType( CUSTOM_DIALOG );
-
-        int choice = fileChooser.showOpenDialog( frame );
-
-        if ( choice == APPROVE_OPTION )
-        {
-            selectedFile = fileChooser.getSelectedFile();
-        }
-
-        return selectedFile;
     }
 
     private File macFileSelection()
