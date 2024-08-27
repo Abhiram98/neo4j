@@ -22,37 +22,37 @@ package org.neo4j.kernel.impl.locking;
 public class NoOpClient implements Locks.Client
 {
     @Override
-    public void acquireShared( Locks.ResourceType resourceType, long resourceId ) throws AcquireLockTimeoutException
+    public void acquireShared( Locks.ResourceType resourceType, long resourceIds) throws AcquireLockTimeoutException
     {
 
     }
 
     @Override
-    public void acquireExclusive( Locks.ResourceType resourceType, long resourceId ) throws AcquireLockTimeoutException
+    public void acquireExclusive( Locks.ResourceType resourceType, long resourceIds) throws AcquireLockTimeoutException
     {
 
     }
 
     @Override
-    public boolean tryExclusiveLock( Locks.ResourceType resourceType, long resourceId )
-    {
-        return false;
-    }
-
-    @Override
-    public boolean trySharedLock( Locks.ResourceType resourceType, long resourceId )
+    public boolean tryExclusiveLock( Locks.ResourceType resourceType, long resourceIds)
     {
         return false;
     }
 
     @Override
-    public void releaseShared( Locks.ResourceType resourceType, long resourceId )
+    public boolean trySharedLock( Locks.ResourceType resourceType, long resourceIds)
+    {
+        return false;
+    }
+
+    @Override
+    public void releaseShared( Locks.ResourceType resourceType, long resourceIds)
     {
 
     }
 
     @Override
-    public void releaseExclusive( Locks.ResourceType resourceType, long resourceId )
+    public void releaseExclusive( Locks.ResourceType resourceType, long resourceIds)
     {
 
     }
